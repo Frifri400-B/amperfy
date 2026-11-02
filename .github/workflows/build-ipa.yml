@@ -22,37 +22,25 @@ jobs:
       - name: Basculer sur le commit ou tag choisi
         run: git checkout ${{ github.event.inputs.version_tag }}
 
-      - name: Force Xcode 16 / Selection du toolchain
+      - name: Force Xcode 16
         run: |
-          XCODE_PATH=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | head -n 1)
-          if [ -n "$XCODE_PATH" ]; then
-            echo "DEVELOPER_DIR=$XCODE_PATH/Contents/Developer" >> $GITHUB_ENV
-          else
-            echo "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer" >> $GITHUB_ENV
-          fi
+          echo "DEVELOPER_DIR=/Applications/Xcode_16.app/Contents/Developer" >> $GITHUB_ENV
 
-      - name: Resolver les packages Swift
+      - name: Compiler et archiver l'application
         run: |
-          xcodebuild -resolvePackageDependencies \
-            -project Amperfy.xcodeproj \
-            -scheme Amperfy
-
-      - name: Compile et cree le fichier IPA propre
-        run: |
-          xcodebuild clean build \
+          xcodebuild archive \
             -project Amperfy.xcodeproj \
             -scheme Amperfy \
             -sdk iphoneos \
             -configuration Release \
+            -archivePath build/Amperfy.xcarchive \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            ENABLE_PREVIEWS=NO \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            BUILD_DIR=build
+            ENABLE_PREVIEWS=NO
 
           mkdir -p Payload
-          mv build/Release-iphoneos/Amperfy.app Payload/
+          cp -r build/Amperfy.xcarchive/Products/Applications/Amperfy.app Payload/
           zip -r Amperfy.ipa Payload
 
       - name: Telecharge le fichier IPA
