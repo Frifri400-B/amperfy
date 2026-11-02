@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.version_tag }}
+          fetch-depth: 1
 
       - name: Prepare Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
