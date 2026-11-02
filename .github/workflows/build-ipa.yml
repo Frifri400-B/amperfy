@@ -14,11 +14,14 @@ jobs:
 
 
     steps:
-      - name: Recuperer le code de la version choisie
+      - name: Recuperer le depot et cibler le commit exact
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.version_tag }}
-          fetch-depth: 1
+          repository: 'BLeeEZ/amperfy'
+          fetch-depth: 0
+
+      - name: Basculer sur le commit v1.2.3 (7abfc7c)
+        run: git checkout ${{ github.event.inputs.version_tag }}
 
       - name: Prepare Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
