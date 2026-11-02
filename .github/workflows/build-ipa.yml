@@ -22,8 +22,9 @@ jobs:
       - name: Basculer sur le commit ou tag choisi
         run: git checkout ${{ github.event.inputs.version_tag }}
 
-      - name: Selectionner Xcode 16.0
-        run: sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+      - name: Selectionner Xcode 16
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
       - name: Compile et cree le fichier IPA
         run: |
