@@ -22,7 +22,7 @@ jobs:
       - name: Basculer sur le commit ou tag choisi
         run: git checkout ${{ github.event.inputs.version_tag }}
 
-      - name: Force Xcode 16
+      - name: Force Xcode 16 / Selection du toolchain
         run: |
           XCODE_PATH=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | head -n 1)
           if [ -n "$XCODE_PATH" ]; then
@@ -31,9 +31,9 @@ jobs:
             echo "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer" >> $GITHUB_ENV
           fi
 
-      - name: Compile et cree le fichier IPA
+      - name: Compile et cree le fichier IPA propre
         run: |
-          xcodebuild build \
+          xcodebuild clean build \
             -project Amperfy.xcodeproj \
             -scheme Amperfy \
             -sdk iphoneos \
@@ -41,6 +41,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
+            ENABLE_PREVIEWS=NO \
             BUILD_DIR=build
 
           mkdir -p Payload
