@@ -31,12 +31,14 @@ jobs:
             echo "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer" >> $GITHUB_ENV
           fi
 
-      - name: Compile et cree le fichier IPA propre
+      - name: Resolver les packages Swift
         run: |
           xcodebuild -resolvePackageDependencies \
             -project Amperfy.xcodeproj \
             -scheme Amperfy
 
+      - name: Compile et cree le fichier IPA propre
+        run: |
           xcodebuild clean build \
             -project Amperfy.xcodeproj \
             -scheme Amperfy \
@@ -46,6 +48,7 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             ENABLE_PREVIEWS=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO \
             BUILD_DIR=build
 
           mkdir -p Payload
