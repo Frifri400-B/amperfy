@@ -4,16 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       version_tag:
-        description: 'v1.2.3'
-        required: false
-        default: ''
+        description: 'Tag (ex: v1.2.3) ou Commit SHA (ex: 7abfc7c)'
+        required: true
+        default: 'v1.2.3'
 
 jobs:
   build:
     runs-on: macos-latest
 
     steps:
-      - name: Recuperer le code (Version specifique ou main)
+      - name: Recuperer le code de la version choisie
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.version_tag }}
@@ -40,5 +40,6 @@ jobs:
       - name: Telecharge le fichier IPA
         uses: actions/upload-artifact@v4
         with:
-          name: Amperfy-${{ github.event.inputs.version_tag || 'latest' }}-Unsigned-IPA
+          name: Amperfy-${{ github.event.inputs.version_tag }}-Unsigned-IPA
           path: Amperfy.ipa
+
