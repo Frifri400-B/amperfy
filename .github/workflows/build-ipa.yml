@@ -33,6 +33,10 @@ jobs:
 
       - name: Compile et cree le fichier IPA propre
         run: |
+          xcodebuild -resolvePackageDependencies \
+            -project Amperfy.xcodeproj \
+            -scheme Amperfy
+
           xcodebuild clean build \
             -project Amperfy.xcodeproj \
             -scheme Amperfy \
