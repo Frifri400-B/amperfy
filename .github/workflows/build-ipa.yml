@@ -1,0 +1,44 @@
+name: Build Unsigned IPA
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'v1.2.3'
+        required: false
+        default: ''
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Recuperer le code (Version specifique ou main)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version_tag }}
+
+      - name: Prepare Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Compile et cree le fichier IPA
+        run: |
+          xcodebuild build \
+            -project Amperfy.xcodeproj \
+            -scheme Amperfy \
+            -sdk iphoneos \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            BUILD_DIR=build
+
+          mkdir -p Payload
+          mv build/Release-iphoneos/Amperfy.app Payload/
+          zip -r Amperfy.ipa Payload
+
+      - name: Telecharge le fichier IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Amperfy-${{ github.event.inputs.version_tag || 'latest' }}-Unsigned-IPA
+          path: Amperfy.ipa
